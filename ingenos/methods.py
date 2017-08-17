@@ -4,43 +4,38 @@ def construct_filter_bool(variants,expression):
     selection_bool = variants.eval(expression)[:]
     return selection_bool
 
-def construct_filter_expression(inversion,inversion_dict,region='expanded_breakpoints'):
+def construct_filter_expression(name,inversion_dict,
+                                buffer=1500000,whole_inversion=False):
+    '''Construct an expression describing the desired SNPs.
     
-    '''Construct an expression containing the desired SNPs.
+    buffer describes the # of bp around each breakpoint to include.
     
-    region takes three options: 
+    whole_inversion specifies whether only the breakpoints and the buffer,
+    or the actual inversion, should be used.'''
     
-    inversion means SNPs are extracted from the whole inversion.
+    proximal_start = inversion_dict[name].proximal_start - buffer
+    proximal_end = inversion_dict[name].proximal_end + buffer
+    distal_start = inversion_dict[name].distal_start - buffer
+    distal_end = inversion_dict[name].distal_end + buffer
     
-    breakpoints_only means SNPs are extracted from only between the breakpoints (this results in 0 SNPs for some inversions!)
-    
-    expanded_breakpoints means SNPs are extracted from the breakpoints + 1.5 Mb on either side.'''
-    
-    valid_region = {'inversion','breakpoints','expanded_breakpoints'}
-    
-    if region not in valid_region:
-        raise ValueError("Region parameter must be one of the following: " % valid_region)
-    
-    proximal_start = inversion_dict[inversion].proximal_start
-    proximal_end = inversion_dict[inversion].proximal_end
-    distal_start = inversion_dict[inversion].distal_start
-    distal_end = inversion_dict[inversion].distal_end
-    
-    if region == "breakpoints_only":
+    if not all(item > 0 for item in [proximal_start,proximal_end,distal_start,distal_end]):
+        raise ValueError("An output coordinate is negative, please adjust buffer")
+
+    if whole_inversion:
         
-        expression = '( ( (POS > {prox_start}) & (POS < {prox_end}) ) | ( (POS > {dist_start} ) & (POS < {dist_end} ) ) )'.format(prox_start=proximal_start, prox_end=proximal_end, dist_start=distal_start, dist_end=distal_end)
+        expression = '( POS > {prox_start} & POS < {dist_end} )'.format(
+            prox_start=proximal_start,
+            dist_end=distal_end)
         
-    elif region == "inversion":
+    else:
         
-        expression = '( (POS > {prox_start}) & (POS < {dist_end}) )'.format(prox_start=proximal_start, dist_end=distal_end)
-    
-    elif region == "expanded_breakpoints":
+        expression = '( ( POS > {prox_start} & POS < {prox_end} ) | ( POS > {dist_start} & POS < {dist_end} ) )'.format(
+            prox_start=proximal_start,
+            prox_end=proximal_end,
+            dist_start=distal_start,
+            dist_end=distal_end)
         
-        offset = 1500000
-        
-        expression = '( ( (POS > {prox_start}) & (POS < {prox_end}) ) | ( (POS > {dist_start} ) & (POS < {dist_end} ) ) )'.format(prox_start=proximal_start-offset, prox_end=proximal_end+offset, dist_start=distal_start-offset, dist_end=distal_end+offset)
-    
-    return expression
+    return(expression)
 
 def downsample_genotypes(boolean_filter,downsample_rate=10):
     '''Downsample a set of genotypes for computational tractability.
