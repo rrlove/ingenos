@@ -1,3 +1,6 @@
+import allel
+import warnings
+
 def construct_filter_expression(name,inversion_dict,
                                 buffer=1500000,whole_inversion=False):
     '''Construct an expression describing the desired SNPs.
@@ -43,9 +46,18 @@ def filter_and_convert_genotypes(boolean_filter,genotypes,max_alleles=2,min_coun
     return number_of_alternate_alleles
 
 def prune_by_LD(number_of_alternate_alleles,window_size=1000,step_size=100,r2=0.2):
-    '''Take an array of the number of alternate alleles and return a smaller array pruned to remove SNPs in LD with each other.'''
-
-    pruned_Bool = allel.locate_unlinked(number_of_alternate_alleles, window_size, step_size, r2)
+    '''Take an array of the number of alternate alleles and return a smaller array pruned
+    to remove SNPs in LD with each other above a specified threshold.'''
+    
+    if not all(item > 0 for item in [window_size,step_size,r2]):
+        raise ValueError("All numeric parameters must be positive")
+        
+    pruned_Bool = allel.locate_unlinked(number_of_alternate_alleles, window_size, step_size,
+                                       r2)
+    
     pruned = number_of_alternate_alleles[pruned_Bool]
     
+    if not len(pruned) <  len(number_of_alternate_alleles):
+        warnings.warn("Warning, no pruning occurred!")
+        
     return pruned

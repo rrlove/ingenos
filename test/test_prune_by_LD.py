@@ -6,7 +6,7 @@ class PruneByLDTestCase(unittest.TestCase):
     
     def setUp(self):
         
-        self.allele_counts = numpy.random.randint(0,2,1000,25)
+        self.allele_counts = numpy.random.randint(0,2,(1000,25))
         
     def test_window_size_is_positive(self):
         
@@ -20,7 +20,10 @@ class PruneByLDTestCase(unittest.TestCase):
         
         self.assertRaises(ValueError, ingenos.prune_by_LD, self.allele_counts, 50, 5, -0.2)
         
-    def test_output_array_is_smaller_than_input(self):
+    def test_output_array_is_no_larger_than_input(self):
         
         output = ingenos.prune_by_LD(self.allele_counts, 50, 5, 0.2)
-        self.assertLess(len(output), len(self.allele_counts))
+        self.assertLessEqual(len(output), len(self.allele_counts))
+
+if __name__ == '__main__':
+	unittest.main()
