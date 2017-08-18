@@ -1,9 +1,3 @@
-def construct_filter_bool(variants,expression):
-    '''Take a set of variants and a positional expression on which to filter them, return a Boolean as to whether each variant/row of genotypes should be included post-filtering.'''
-
-    selection_bool = variants.eval(expression)[:]
-    return selection_bool
-
 def construct_filter_expression(name,inversion_dict,
                                 buffer=1500000,whole_inversion=False):
     '''Construct an expression describing the desired SNPs.
@@ -37,13 +31,6 @@ def construct_filter_expression(name,inversion_dict,
         
     return(expression)
 
-def downsample_genotypes(boolean_filter,downsample_rate=10):
-    '''Downsample a set of genotypes for computational tractability.
-    To be precise, this function stochastically shrinks the Boolean filter later used to pull out the genotypes.
-    Shrinkage is approximate.'''
-    
-    downsampled_boolean = [random.randrange(100) < downsample_rate if value else value for value in boolean_filter]
-    return downsampled_boolean
 def filter_and_convert_genotypes(boolean_filter,genotypes,max_alleles=2,min_count=3):
     '''Take a scikit-allel genotype array and a filter saying which positions to include and return a set of allele counts ready for PCA.
     Max_alleles and min_count determine which genotypes are ultimately used in the PCA. The default selects biallelic positions where the minor allele is present at least 3 times.'''
@@ -54,6 +41,7 @@ def filter_and_convert_genotypes(boolean_filter,genotypes,max_alleles=2,min_coun
     number_of_alternate_alleles = genotypes_subset.subset(pca_selection_bool).to_n_alt()[:]
     
     return number_of_alternate_alleles
+
 def prune_by_LD(number_of_alternate_alleles,window_size=1000,step_size=100,r2=0.2):
     '''Take an array of the number of alternate alleles and return a smaller array pruned to remove SNPs in LD with each other.'''
 
