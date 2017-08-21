@@ -34,16 +34,51 @@ def construct_filter_expression(name,inversion_dict,
         
     return(expression)
 
-def filter_and_convert_genotypes(boolean_filter,genotypes,max_alleles=2,min_count=3):
-    '''Take a scikit-allel genotype array and a filter saying which positions to include and return a set of allele counts ready for PCA.
-    Max_alleles and min_count determine which genotypes are ultimately used in the PCA. The default selects biallelic positions where the minor allele is present at least 3 times.'''
+def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=None,max_alleles=2,min_count=3):
+    '''Filter a genotype array based on booleans of sites and samples to include.
     
-    genotypes_subset = genotypes.subset(boolean_filter,)
-    allele_count_subset = allel.AlleleCountsArray(genotypes_subset.count_alleles())
-    pca_selection_bool = (allele_count_subset.max_allele() == max_alleles-1) & (allele_count_subset[:, :2].min(axis=1) > min_count)
-    number_of_alternate_alleles = genotypes_subset.subset(pca_selection_bool).to_n_alt()[:]
+    Further filter genotypes based on allele count data.
     
-    return number_of_alternate_alleles
+    Return a set of alternate allele counts ready for PCA, and the allele counts filter.
+    '''
+    
+    if not all(item > 0 for item in [max_alleles,min_count]):
+        raise ValueError("Max alleles and minimum allele count must be greater than 0 ")
+    
+    if sites_boolean:
+        
+        if not len(sites_boolean) == genotypes.shape[0]:
+            raise ValueError("Length of sites filter does not match length of genotypes")
+    
+    if samples_boolean:
+        
+        if not len(samples_boolean) == genotypes.shape[1]:
+            raise ValueError("Length of samples filter does not match length of genotypes")
+        
+    if sites_boolean and not samples_boolean:
+
+        genotypes_subset = genotypes.subset(sel0=sites_boolean)
+        
+    if samples_boolean and not sites_boolean:
+        
+        genotypes_subset = genotypes.subset(sel1=samples_boolean)
+        
+    if sites_boolean and samples_boolean:
+        
+        genotypes_subset = genotypes.subset(sel0=sites_boolean,sel1=samples_boolean)
+                
+    else:
+        
+        raise ValueError("Either a samples or a sites filter must be passed")
+        
+    allele_counts = allel.AlleleCountsArray(genotypes_subset.count_alleles())
+    
+    allele_counts_boolean = (allele_counts.max_allele() == max_alleles - 1) & (
+        allele_counts[:, :2].min(axis=1) > min_count)
+    
+    num_alt_alleles = genotypes_subset.subset(allele_counts_boolean).to_n_alt()[:]
+    
+    return num_alt_alleles, allele_counts_boolean
 
 def prune_by_LD(number_of_alternate_alleles,window_size=1000,step_size=100,r2=0.2):
     '''Take an array of the number of alternate alleles and return a smaller array pruned
