@@ -20,13 +20,13 @@ def construct_filter_expression(name,inversion_dict,
 
     if whole_inversion:
         
-        expression = '( POS > {prox_start} & POS < {dist_end} )'.format(
+        expression = '( (POS > {prox_start}) & (POS < {dist_end}) )'.format(
             prox_start=proximal_start,
             dist_end=distal_end)
         
     else:
         
-        expression = '( ( POS > {prox_start} & POS < {prox_end} ) | ( POS > {dist_start} & POS < {dist_end} ) )'.format(
+        expression = '( ( (POS > {prox_start}) & (POS < {prox_end}) ) | ( (POS > {dist_start}) & (POS < {dist_end}) ) )'.format(
             prox_start=proximal_start,
             prox_end=proximal_end,
             dist_start=distal_start,
@@ -45,25 +45,25 @@ def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=No
     if not all(item > 0 for item in [max_alleles,min_count]):
         raise ValueError("Max alleles and minimum allele count must be greater than 0 ")
     
-    if sites_boolean:
+    if sites_boolean is not None:
         
         if not len(sites_boolean) == genotypes.shape[0]:
             raise ValueError("Length of sites filter does not match length of genotypes")
     
-    if samples_boolean:
+    if samples_boolean is not None:
         
         if not len(samples_boolean) == genotypes.shape[1]:
             raise ValueError("Length of samples filter does not match length of genotypes")
         
-    if sites_boolean and not samples_boolean:
+    if sites_boolean is not None and samples_boolean is None:
 
         genotypes_subset = genotypes.subset(sel0=sites_boolean)
         
-    if samples_boolean and not sites_boolean:
+    if samples_boolean is not None and sites_boolean is None:
         
         genotypes_subset = genotypes.subset(sel1=samples_boolean)
         
-    if sites_boolean and samples_boolean:
+    if sites_boolean is not None and samples_boolean is not None:
         
         genotypes_subset = genotypes.subset(sel0=sites_boolean,sel1=samples_boolean)
                 
