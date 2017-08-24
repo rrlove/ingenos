@@ -82,7 +82,8 @@ def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=No
 
 def prune_by_LD(number_of_alternate_alleles,window_size=1000,step_size=100,r2=0.2):
     '''Take an array of the number of alternate alleles and return a smaller array pruned
-    to remove SNPs in LD with each other above a specified threshold.'''
+    to remove SNPs in LD with each other above a specified threshold as well as the Boolean
+    used for filtering.'''
     
     if not all(item > 0 for item in [window_size,step_size,r2]):
         raise ValueError("All numeric parameters must be positive")
@@ -95,4 +96,4 @@ def prune_by_LD(number_of_alternate_alleles,window_size=1000,step_size=100,r2=0.
     if not len(pruned) <  len(number_of_alternate_alleles):
         warnings.warn("Warning, no pruning occurred!")
         
-    return pruned
+    return pruned, pruned_Bool
