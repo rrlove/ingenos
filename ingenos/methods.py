@@ -1,5 +1,55 @@
 import allel
 import warnings
+import h5py
+import pandas as pd
+
+def import_data(filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/data/ag1000g.phase1.ar3.pass.2R.h5', chrom_name='2R'):
+    '''Take the path to a well-formed h5py file and return a VariantTable and a GenotypeArray.'''
+    
+    ##to-do: check that h5py file is well-formed
+    
+    callset_handle = filepath
+    callset = h5py.File(callset_handle, mode='r')
+    
+    variants = allel.VariantChunkedTable(callset[chrom_name]['variants'],names=['POS','REF','ALT','DP','MQ','QD','num_alleles',], index='POS')
+    
+    genotypes = allel.GenotypeChunkedArray(callset[chrom_name]['calldata']['genotype'])
+    
+    if not genotypes.shape[0] == variants.shape[0]:
+        raise ValueError("Genotypes and variant table must contain the same number of positions")
+
+    return variants, genotypes
+
+def import_metadata(md_filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/metadata/Ag1K_phase1_metadata.txt',
+                    kt_filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/metadata/Cameroon_phase1_karyotypes.xlsx',
+                    training_set_filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/metadata/Cameroon_phase1_karyotyped_training_set.txt'):
+    
+    '''Import the AG1K metadata, the file with karyotypes given, and the list of samples in
+    the training set given the correct paths.'''
+    
+    metadata = pd.DataFrame.from_csv(md_filepath, sep='\t')
+    
+    karyotypes = pd.read_excel(kt_filepath, skiprows=6)
+    
+    training = pd.read_table(training_set_filepath, header=None)
+    
+    return metadata, karyotypes, training
+
+def process_metadata(metadata, karyotypes, training):
+    
+    '''Return:
+    1.) Karyotypes for the samples in the training set that are also in the metadata
+    (samples not in the metadata were not sequenced).
+    2.) A boolean the length of the metadata (and therefore the genotype array)
+    indicating which samples are in the training set.'''
+    
+    sequenced_training_set_IDs = training[training[0].isin(metadata["src_code"])]
+    
+    karyotyped_training_samples = karyotypes[karyotypes["Sample ID"].isin(sequenced_training_set_IDs[0])]
+    
+    pull_out_training_set = metadata["src_code"].isin(training[0])
+    
+    return karyotyped_training_samples, pull_out_training_set
 
 def construct_filter_expression(name,inversion_dict,
                                 buffer=1500000,whole_inversion=False):
