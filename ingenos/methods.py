@@ -27,7 +27,7 @@ def import_metadata(md_filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_k
     '''Import the AG1K metadata, the file with karyotypes given, and the list of samples in
     the training set given the correct paths.'''
     
-    metadata = pd.DataFrame.from_csv(md_filepath, sep='\t', dtype={'year':int})
+    metadata = pd.read_csv(md_filepath, sep='\t', dtype={'year':int})
     
     karyotypes = pd.read_excel(kt_filepath, skiprows=6, na_values=['#N/R'],
                            converters={'2Rj':int,'2Rb':int,'2Rc':int,'2Rd':int,'2Ru':int,'2La':int})
