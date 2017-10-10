@@ -36,22 +36,23 @@ def import_metadata(md_filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_k
     
     return metadata, karyotypes, training
 
-def process_metadata(metadata, karyotypes, training):
+def process_metadata(metadata, karyotypes, training_set, inversion, md_label="src_code", kt_label="Sample ID", tr_label="ox_code"):
     
     '''Return:
-    1.) Karyotypes for the samples in the training set that are also in the metadata
-    (samples not in the metadata were not sequenced).
-    2.) A boolean the length of the metadata (and therefore the genotype array)
-    indicating which samples are in the training set.'''
+    1.) Karyotyped samples in both the metadata and the training set 
+    (samples not in the metadata were not sequenced)
+    2.) A boolean the length of the metadata (and therefore also of the genotype array)
+    indicating which samples are in 1.) above
+    '''
     
-    sequenced_training_set_IDs = training[training[0].isin(metadata["src_code"])]
+    kt_md = pd.merge(metadata, karyotypes, left_on=md_label, right_on=kt_label)
     
-    karyotyped_training_samples = karyotypes[karyotypes["Sample ID"].isin(sequenced_training_set_IDs[0])]
-    
-    pull_out_training_set = metadata["src_code"].isin(training[0])
-    
-    return karyotyped_training_samples, pull_out_training_set
+    kt_md_tr = kt_md[~kt_md[inversion].isnull()][kt_md[~kt_md[inversion].isnull()][md_label].isin(training_set[0])]
 
+    filter_genotypes = metadata[tr_label].isin(kt_md_tr[tr_label])
+    
+    return kt_md_tr, filter_genotypes
+    
 def construct_filter_expression(name,inversion_dict,
                                 buffer=1500000,whole_inversion=False):
     '''Construct an expression describing the desired SNPs.
@@ -85,7 +86,7 @@ def construct_filter_expression(name,inversion_dict,
         
     return(expression)
 
-def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=None,max_alleles=2,min_count=3):
+def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=None,max_alleles=2,min_count=3,variance_threshold=0.15):
     '''Filter a genotype array based on booleans of sites and samples to include.
     
     Further filter genotypes based on allele count data.
@@ -110,11 +111,11 @@ def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=No
 
         genotypes_subset = genotypes.subset(sel0=sites_boolean)
         
-    if samples_boolean is not None and sites_boolean is None:
+    elif samples_boolean is not None and sites_boolean is None:
         
         genotypes_subset = genotypes.subset(sel1=samples_boolean)
         
-    if sites_boolean is not None and samples_boolean is not None:
+    elif sites_boolean is not None and samples_boolean is not None:
         
         genotypes_subset = genotypes.subset(sel0=sites_boolean,sel1=samples_boolean)
                 
@@ -125,7 +126,8 @@ def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=No
     allele_counts = allel.AlleleCountsArray(genotypes_subset.count_alleles())
     
     allele_counts_boolean = (allele_counts.max_allele() == max_alleles - 1) & (
-        allele_counts[:, :2].min(axis=1) > min_count)
+        allele_counts[:, :2].min(axis=1) > min_count) & (
+        allele_counts.to_frequencies()[:,1] > variance_threshold)    
     
     num_alt_alleles = genotypes_subset.subset(allele_counts_boolean).to_n_alt()[:]
     
