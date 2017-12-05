@@ -94,8 +94,8 @@ def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=No
     Return a set of alternate allele counts ready for PCA, and the allele counts filter.
     '''
     
-    if not all(item > 0 for item in [max_alleles,min_count]):
-        raise ValueError("Max alleles and minimum allele count must be greater than 0 ")
+    if not all(item > 0 for item in [max_alleles]):
+        raise ValueError("Max alleles must be greater than 0 ")
     
     if sites_boolean is not None:
         
