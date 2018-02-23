@@ -1,4 +1,5 @@
 import allel
+import date_time
 import warnings
 import h5py
 import pandas as pd
@@ -125,7 +126,7 @@ def filter_and_convert_genotypes(genotypes,sites_boolean=None,samples_boolean=No
         
     allele_counts = allel.AlleleCountsArray(genotypes_subset.count_alleles())
     
-    allele_counts_boolean = (allele_counts.max_allele() == max_alleles - 1) & (
+    allele_counts_boolean = (allele_counts.max_allele() <= max_alleles - 1) & (
         allele_counts[:, :2].min(axis=1) > min_count) & (
         allele_counts.to_frequencies()[:,1] > variance_threshold)    
     
@@ -150,3 +151,9 @@ def prune_by_LD(number_of_alternate_alleles,window_size=1000,step_size=100,r2=0.
         warnings.warn("Warning, no pruning occurred!")
         
     return pruned, pruned_Bool
+
+def make_date_stamp(filename, extension = ".pdf"):
+    
+    date_stamp = filename + '.' + datetime.date.today().strftime("%m%d%y") + extension
+    
+    return date_stamp
