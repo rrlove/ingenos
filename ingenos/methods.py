@@ -1,10 +1,11 @@
 import allel
-import date_time
+import datetime
 import warnings
 import h5py
 import pandas as pd
 
-def import_data(filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/data/ag1000g.phase1.ar3.pass.2R.h5', chrom_name='2R'):
+def import_data(filepath, chrom_name,
+		names = ['POS','REF','ALT','DP','MQ','QD','num_alleles',]):
     '''Take the path to a well-formed h5py file and return a VariantTable and a GenotypeArray.'''
     
     ##to-do: check that h5py file is well-formed
@@ -12,7 +13,7 @@ def import_data(filepath='/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/da
     callset_handle = filepath
     callset = h5py.File(callset_handle, mode='r')
     
-    variants = allel.VariantChunkedTable(callset[chrom_name]['variants'],names=['POS','REF','ALT','DP','MQ','QD','num_alleles',], index='POS')
+    variants = allel.VariantChunkedTable(callset[chrom_name]['variants'], names=names, index='POS')
     
     genotypes = allel.GenotypeChunkedArray(callset[chrom_name]['calldata']['genotype'])
     
