@@ -10,15 +10,18 @@ class PruneByLDTestCase(unittest.TestCase):
         
     def test_window_size_is_positive(self):
         
-        self.assertRaises(ValueError, ingenos.prune_by_LD, self.allele_counts, -50, 100, 0.2)
+        self.assertRaises(ValueError, ingenos.prune_by_LD, self.allele_counts,
+                          -50, 100, 0.2)
         
     def test_step_size_is_positive(self):
         
-        self.assertRaises(ValueError, ingenos.prune_by_LD, self.allele_counts, 50, -5, 0.2)
+        self.assertRaises(ValueError, ingenos.prune_by_LD, self.allele_counts,
+                          50, -5, 0.2)
         
     def test_r2_is_positive(self):
         
-        self.assertRaises(ValueError, ingenos.prune_by_LD, self.allele_counts, 50, 5, -0.2)
+        self.assertRaises(ValueError, ingenos.prune_by_LD, self.allele_counts,
+                          50, 5, -0.2)
         
     def test_output_array_is_no_larger_than_input(self):
         
