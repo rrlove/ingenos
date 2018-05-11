@@ -50,12 +50,12 @@ def compute_concordance_strat(alleles, is_called, karyos):
 
     assert np.max(karyos) <= 2, \
     "Improper karyotype {karyo}".format(karyo=np.max(karyos))
-    
+
     assert np.min(alleles) >= 0, \
-    "Improper alt allele count {count}".format(count = np.min(alleles))
-    
+    "Improper alt allele count {count}".format(count=np.min(alleles))
+
     assert np.max(alleles) <= 2, \
-    "Improper alt allele count {count}".format(count = np.max(allelesmaaaaa))
+    "Improper alt allele count {count}".format(count=np.max(alleles))
 
     #homo standard
     bool_0 = (karyos == 0)

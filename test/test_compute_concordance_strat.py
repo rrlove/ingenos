@@ -21,7 +21,7 @@ class ComputeConcordanceStratTestCase(unittest.TestCase):
         
         test_output = (0,0,0,0,(2/3),(2/3),(2/3),(2/3))
         
-        self.assertEqual(ingenos.compute_concordance_strat(test_alleles, 
+        self.assertAlmostEqual(ingenos.compute_concordance_strat(test_alleles, 
                          test_is_called, test_karyos), test_output)
         
     def test_no_called(self):
@@ -34,7 +34,8 @@ class ComputeConcordanceStratTestCase(unittest.TestCase):
         
         test_output = (np.nan, np.nan, np.nan, np.nan, 0, 0, np.nan, 0)
         
-        self.assertEqual(ingenos.compute_concordance_strat(test_alleles,
+        np.testing.assert_almost_equal(
+                ingenos.compute_concordance_strat(test_alleles,
                             test_is_called, test_karyos), test_output)
         
     def test_incorrect_shape(self):

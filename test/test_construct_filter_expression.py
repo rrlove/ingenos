@@ -15,8 +15,10 @@ class ConstructFilterExpressionTestCase(unittest.TestCase):
         ingenos.construct_filter_expression(self.name,self.mock_inversion_dict,
                                             buffer=0)
         
-         self.assertEqual(test_expression,
-                '( ( POS > 15 & POS < 20 ) | ( POS > 750 & POS < 775 ) )') 
+        self.assertEqual(
+                test_expression,
+                '( ( (POS > 15) & (POS < 20) ) |\
+        ( (POS > 750) & (POS < 775) ) )') 
     
     def test_simple_case(self):
         
@@ -25,7 +27,7 @@ class ConstructFilterExpressionTestCase(unittest.TestCase):
                                             buffer=0,whole_inversion=True)
         
         self.assertEqual(test_expression,
-                        '( POS > 15 & POS < 775 )')
+                        '( (POS > 15) & (POS < 775) )')
         
     def test_negative_coordinates_fail(self):
         self.assertRaises(ValueError, ingenos.construct_filter_expression, 
