@@ -203,13 +203,13 @@ def import_data(filepath, chrom_name,
 
 def import_metadata(md_filepath=
                     '/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/\
-                    metadata/Ag1K_phase1_metadata.txt',
+metadata/Ag1K_phase1_metadata.txt',
                     kt_filepath=
                     '/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/\
-                    metadata/Cameroon_phase1_karyotypes.xlsx',
+metadata/Cameroon_phase1_karyotypes.xlsx',
                     training_set_filepath=
                     '/afs/crc.nd.edu/group/BesanskyNGS/data05/comp_karyo/\
-                    metadata/Cameroon_phase1_karyotyped_training_set.txt'):
+metadata/Cameroon_phase1_karyotyped_training_set.txt'):
 
     '''Import the AG1K metadata, the file with karyotypes given,
     and the list of samples in the training set, given the correct paths.'''
