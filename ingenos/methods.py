@@ -5,6 +5,8 @@ import warnings
 
 import allel
 import h5py
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -280,11 +282,20 @@ def make_snp_index(positions, vtbl):
     return indices
 
 def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
-                    region=None, alpha=0.5, title=None, buffer=False):
+                    region=None, title=None, buffer=False, alpha=0.5, 
+                    cb=True):
     ##adapted from Alistair's walkthrough
     '''Show two principal components of a PCA.'''
 
     marker_list = ['o', 'v', 'X', 's', 'p', 'd', '^', '_', '*', 'H']
+    
+    if not cb:
+        
+        ncol = len(metadata[inversion_color].unique())
+        
+        cm = plt.get_cmap("gist_ncar")
+        
+        plt.gca().set_color_cycle([cm(i) for i in np.linspace(0, 0.9, ncol)])
 
     x = coords[:, pc1]
     y = coords[:, pc2]
