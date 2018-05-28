@@ -289,6 +289,9 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
 
     marker_list = ['o', 'v', 'X', 's', 'p', 'd', '^', '_', '*', 'H']
     
+    x = coords[:, pc1]
+    y = coords[:, pc2]
+    
     if not cb:
         
         ncol = len(metadata[inversion_color].unique())
@@ -297,8 +300,11 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
         
         plt.gca().set_color_cycle([cm(i) for i in np.linspace(0, 0.9, ncol)])
 
-    x = coords[:, pc1]
-    y = coords[:, pc2]
+        for index, status in enumerate(metadata[inversion_color].unique()):
+            flt = (metadata[inversion_color] == status).values
+            ax.plot(x[flt], y[flt], linestyle=' ',
+                    label=status, alpha=alpha)
+        
     for index, status in enumerate(metadata[inversion_color].unique()):
         flt = (metadata[inversion_color] == status).values
         ax.plot(x[flt], y[flt], marker=marker_list[index], linestyle=' ',
