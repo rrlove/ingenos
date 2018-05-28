@@ -304,11 +304,12 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
             flt = (metadata[inversion_color] == status).values
             ax.plot(x[flt], y[flt], linestyle=' ',
                     label=status, alpha=alpha)
-        
-    for index, status in enumerate(metadata[inversion_color].unique()):
-        flt = (metadata[inversion_color] == status).values
-        ax.plot(x[flt], y[flt], marker=marker_list[index], linestyle=' ',
-                label=status, markersize=6, alpha=alpha)
+    
+    else:    
+        for index, status in enumerate(metadata[inversion_color].unique()):
+            flt = (metadata[inversion_color] == status).values
+            ax.plot(x[flt], y[flt], marker=marker_list[index], linestyle=' ',
+                    label=status, markersize=6, alpha=alpha)
 
     ax.set_xlabel('PC%s (%.1f%%)' % \
                   (pc1+1, model.explained_variance_ratio_[pc1]*100))
