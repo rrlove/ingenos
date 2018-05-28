@@ -298,7 +298,9 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
         
         cm = plt.get_cmap("gist_ncar")
         
-        plt.gca().set_color_cycle([cm(i) for i in np.linspace(0, 0.9, ncol)])
+        colors = [cm(i) for i in np.linspace(0, 0.9, ncol)]
+        
+        ax.set_prop_cycle('color', colors)
 
         for index, status in enumerate(metadata[inversion_color].unique()):
             flt = (metadata[inversion_color] == status).values
@@ -306,6 +308,7 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
                     label=status, alpha=alpha)
     
     else:    
+        
         for index, status in enumerate(metadata[inversion_color].unique()):
             flt = (metadata[inversion_color] == status).values
             ax.plot(x[flt], y[flt], marker=marker_list[index], linestyle=' ',
