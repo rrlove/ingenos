@@ -281,38 +281,36 @@ def make_snp_index(positions, vtbl):
 
     return indices
 
-def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
+def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, label_with,
                     region=None, title=None, buffer=False, alpha=0.5, 
                     cb=True):
     ##adapted from Alistair's walkthrough
     '''Show two principal components of a PCA.'''
 
-    marker_list = ['o', 'v', 'X', 's', 'p', 'd', '^', '_', '*', 'H']
+    marker_list = ['o', 'v', 'X', 's', 'P',
+                   'd', '^', '*', '<', '>',
+                   'o', 'v', 'X', 's', 'P',
+                   'd', '^', '*', '<', '>']
+    
+    size_list = [5] * 10 + [2] * 10
     
     x = coords[:, pc1]
     y = coords[:, pc2]
     
     if not cb:
         
-        ncol = len(metadata[inversion_color].unique())
+        ncol = len(metadata[label_with].unique())
         
         cm = plt.get_cmap("gist_ncar")
         
         colors = [cm(i) for i in np.linspace(0, 0.9, ncol)]
         
         ax.set_prop_cycle('color', colors)
-
-        for index, status in enumerate(metadata[inversion_color].unique()):
-            flt = (metadata[inversion_color] == status).values
-            ax.plot(x[flt], y[flt], linestyle=' ',
-                    label=status, alpha=alpha)
     
-    else:    
-        
-        for index, status in enumerate(metadata[inversion_color].unique()):
-            flt = (metadata[inversion_color] == status).values
+    for index, status in enumerate(metadata[label_with].unique()):
+            flt = (metadata[label_with] == status).values
             ax.plot(x[flt], y[flt], marker=marker_list[index], linestyle=' ',
-                    label=status, markersize=6, alpha=alpha)
+            label=status, markersize=size_list[index], alpha=alpha)
 
     ax.set_xlabel('PC%s (%.1f%%)' % \
                   (pc1+1, model.explained_variance_ratio_[pc1]*100))
@@ -321,10 +319,10 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, inversion_color,
 
     if title is None and buffer is True:
         ax.set_title('PC%s vs. PC%s for %s, colored by %s' % \
-                     (pc1+1, pc2+1, region, inversion_color))
+                     (pc1+1, pc2+1, region, label_with))
     elif title is None and buffer is False:
         ax.set_title('PC%s vs. PC%s for %s, colored by %s, no buffer' % \
-                     (pc1+1, pc2+1, region, inversion_color))
+                     (pc1+1, pc2+1, region, label_with))
     else:
         ax.set_title(title)
 
