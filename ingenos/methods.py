@@ -365,3 +365,22 @@ def prune_by_ld(number_of_alternate_alleles, window_size=1000,
         warnings.warn("Warning, no pruning occurred!")
 
     return pruned, pruned_bool
+
+def run_pca(inversion, vtbl, genotypes, whole_inversion=True, buffer=0, 
+            samples_bool=None, min_count, variance_threshold):
+    
+    sites = construct_filter_expression(inversion, ingenos.inversionDict,
+                                        whole_inversion=whole_inversion,
+                                        buffer=buffer)
+    
+    sites_bool = vtbl.eval(sites)
+    
+    alt_alleles, _ =\
+    filter_and_convert_genotypes(genotypes, sites_boolean = sites_bool, 
+                                 samples_bool=samples_bool, min_count,
+                                 variance_threshold)
+    
+    coords, model = allel.stats.pca(alt_alleles)
+    
+    return coords, model
+     
