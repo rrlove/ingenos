@@ -367,7 +367,66 @@ def prune_by_ld(number_of_alternate_alleles, window_size=1000,
 
     return pruned, pruned_bool
 
-def run_pca(inversion, vtbl, genotypes, min_count=3, variance_threshold=0.15,
+def run_concordance_calculation(inversion, vtbl, genotypes, karyos, 
+                                min_count=3, 
+                                variance_threshold=0.15, whole_inversion=True,
+                                buffer=0, samples_bool=None):
+    
+    sites = construct_filter_expression(inversion, inversionDict,
+                                        whole_inversion=whole_inversion,
+                                        buffer=buffer)
+    
+    sites_bool = vtbl.eval(sites)
+    
+    alt_alleles, which_alleles =\
+    filter_and_convert_genotypes(genotypes, sites_boolean=sites_bool,
+                                 samples_bool=samples_bool,
+                                 min_count=min_count,
+                                 variance_threshold=variance_threshold)
+    
+    is_called = genotypes.subset(sel0 = sites_bool).subset(
+    sel0 = which_alleles).is_called()
+    
+    score_0 = []
+    is_called_0 = []
+    score_1 = []
+    is_called_1 = []
+    score_2 = []
+    is_called_2 = []
+    score_all = []
+    is_called_all = []
+    
+    for i in range(len(alt_alleles)):
+    
+        ret_tuple = compute_concordance_strat(alt_alleles[i], is_called[i], 
+                                          karyos)
+    
+        score_0.append(ret_tuple[0])
+        score_1.append(ret_tuple[1])
+        score_2.append(ret_tuple[2])
+        score_all.append(ret_tuple[3])
+        is_called_0.append(ret_tuple[4])
+        is_called_1.append(ret_tuple[5])
+        is_called_2.append(ret_tuple[6])
+        is_called_all.append(ret_tuple[7])
+        
+    scores = pd.DataFrame({"position": vtbl\
+                    [sites_bool][which_alleles]["POS"],
+                      "score_0" : pd.Series(score_0),
+                      "score_1" : pd.Series(score_1),
+                      "score_2" : pd.Series(score_2),
+                      "overall_score" : pd.Series(score_all),
+                      "called_0" : pd.Series(is_called_0),
+                      "called_1" : pd.Series(is_called_1),
+                      "called_2" : pd.Series(is_called_2),
+                      "overall_called" : pd.Series(is_called_all)},
+                     columns = ["position","score_0","score_1","score_2",
+                                "overall_score","called_0","called_1",
+                                "called_2","overall_called"])
+        
+    return scores
+
+def run_pca(inversion, vtbl, genotypes, variance_threshold=0.15, min_count=3,
             whole_inversion=True, buffer=0, samples_bool=None):
     
     sites = construct_filter_expression(inversion, inversionDict,
@@ -378,7 +437,7 @@ def run_pca(inversion, vtbl, genotypes, min_count=3, variance_threshold=0.15,
     
     alt_alleles, _ =\
     filter_and_convert_genotypes(genotypes, sites_boolean=sites_bool, 
-                                 samples_bool=samples_bool, 
+                                 samples_boolean=samples_bool, 
                                  min_count=min_count,
                                  variance_threshold=variance_threshold)
     
