@@ -9,7 +9,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from ..objects import inversionDict
+from ingenos.objects import inversionDict
 
 def compute_concordance(alleles, is_called, karyos):
     '''For each SNP, calculate the % of samples in which
