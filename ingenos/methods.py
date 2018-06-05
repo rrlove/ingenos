@@ -9,6 +9,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from ..objects import inversionDict
 
 def compute_concordance(alleles, is_called, karyos):
     '''For each SNP, calculate the % of samples in which
@@ -366,19 +367,20 @@ def prune_by_ld(number_of_alternate_alleles, window_size=1000,
 
     return pruned, pruned_bool
 
-def run_pca(inversion, vtbl, genotypes, min_count, variance_threshold,
+def run_pca(inversion, vtbl, genotypes, min_count=3, variance_threshold=0.15,
             whole_inversion=True, buffer=0, samples_bool=None):
     
-    sites = construct_filter_expression(inversion, ingenos.inversionDict,
+    sites = construct_filter_expression(inversion, inversionDict,
                                         whole_inversion=whole_inversion,
                                         buffer=buffer)
     
     sites_bool = vtbl.eval(sites)
     
     alt_alleles, _ =\
-    filter_and_convert_genotypes(genotypes, sites_boolean = sites_bool, 
-                                 samples_bool=samples_bool, min_count,
-                                 variance_threshold)
+    filter_and_convert_genotypes(genotypes, sites_boolean=sites_bool, 
+                                 samples_bool=samples_bool, 
+                                 min_count=min_count,
+                                 variance_threshold=variance_threshold)
     
     coords, model = allel.stats.pca(alt_alleles)
     
