@@ -367,7 +367,7 @@ def prune_by_ld(number_of_alternate_alleles, window_size=1000,
     return pruned, pruned_bool
 
 def run_pca(inversion, vtbl, genotypes, min_count, variance_threshold,
-            whole_inversion=True, buffer=0, samples_bool=None, ):
+            whole_inversion=True, buffer=0, samples_bool=None):
     
     sites = construct_filter_expression(inversion, ingenos.inversionDict,
                                         whole_inversion=whole_inversion,
