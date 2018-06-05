@@ -380,7 +380,7 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
     
     alt_alleles, which_alleles =\
     filter_and_convert_genotypes(genotypes, sites_boolean=sites_bool,
-                                 samples_bool=samples_bool,
+                                 samples_boolean=samples_bool,
                                  min_count=min_count,
                                  variance_threshold=variance_threshold)
     
