@@ -368,15 +368,17 @@ def prune_by_ld(number_of_alternate_alleles, window_size=1000,
     return pruned, pruned_bool
 
 def run_concordance_calculation(inversion, vtbl, genotypes, karyos, 
-                                min_count=3, 
-                                variance_threshold=0.15, whole_inversion=True,
-                                buffer=0, samples_bool=None):
+                                variance_threshold=0.15, min_count=3, 
+                                whole_inversion=True,
+                                buffer=0, samples_bool=None, sites_bool=None):
     
-    sites = construct_filter_expression(inversion, inversionDict,
+    if not sites_bool:
+    
+        sites = construct_filter_expression(inversion, inversionDict,
                                         whole_inversion=whole_inversion,
                                         buffer=buffer)
-    
-    sites_bool = vtbl.eval(sites)
+        
+        sites_bool = vtbl.eval(sites)
     
     alt_alleles, which_alleles =\
     filter_and_convert_genotypes(genotypes, sites_boolean=sites_bool,
@@ -384,8 +386,8 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
                                  min_count=min_count,
                                  variance_threshold=variance_threshold)
     
-    is_called = genotypes.subset(sel0 = sites_bool).subset(
-    sel0 = which_alleles).is_called()
+    is_called = genotypes.subset(sel0 = sites_bool, sel1 = samples_bool).\
+    subset(sel0 = which_alleles).is_called()
     
     score_0 = []
     is_called_0 = []
@@ -423,6 +425,9 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
                      columns = ["position","score_0","score_1","score_2",
                                 "overall_score","called_0","called_1",
                                 "called_2","overall_called"])
+        
+    scores["min"] =\
+    scores.loc[:, ["score_0", "score_1", "score_2"]].min(axis = 1)
         
     return scores
 
