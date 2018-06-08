@@ -372,7 +372,7 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
                                 whole_inversion=True,
                                 buffer=0, samples_bool=None, sites_bool=None):
     
-    if not sites_bool:
+    if sites_bool is None:
     
         sites = construct_filter_expression(inversion, inversionDict,
                                         whole_inversion=whole_inversion,
