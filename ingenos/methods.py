@@ -370,7 +370,8 @@ def prune_by_ld(number_of_alternate_alleles, window_size=1000,
 def run_concordance_calculation(inversion, vtbl, genotypes, karyos, 
                                 variance_threshold=0.15, min_count=3, 
                                 whole_inversion=True,
-                                buffer=0, samples_bool=None, sites_bool=None):
+                                buffer=0, samples_bool=None, sites_bool=None,
+                                inversionDict = inversionDict):
     
     if sites_bool is None:
     
