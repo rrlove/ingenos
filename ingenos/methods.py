@@ -424,9 +424,9 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
                       "called_1" : pd.Series(is_called_1),
                       "called_2" : pd.Series(is_called_2),
                       "overall_called" : pd.Series(is_called_all)},
-                     columns = ["position","score_0","score_1","score_2",
-                                "overall_score","called_0","called_1",
-                                "called_2","overall_called"])
+                     columns = ["position","ref","alt","score_0","score_1",
+                                "score_2","overall_score","called_0",
+                                "called_1","called_2","overall_called"])
         
     scores["min"] =\
     scores.loc[:, ["score_0", "score_1", "score_2"]].min(axis = 1)
