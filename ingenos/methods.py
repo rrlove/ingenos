@@ -415,7 +415,7 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
     scores = pd.DataFrame({"position": vtbl\
                     [sites_bool][which_alleles]["POS"],
                     "ref": vtbl[sites_bool][which_alleles]["REF"],
-                    "alt": vtbl[sites_bool][which_alleles]["ALT"],
+                    "alt": vtbl[sites_bool][which_alleles]["ALT"][:,0],
                       "score_0" : pd.Series(score_0),
                       "score_1" : pd.Series(score_1),
                       "score_2" : pd.Series(score_2),
