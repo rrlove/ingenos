@@ -5,7 +5,6 @@ import warnings
 
 import allel
 import h5py
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -415,6 +414,8 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
         
     scores = pd.DataFrame({"position": vtbl\
                     [sites_bool][which_alleles]["POS"],
+                    "ref": vtbl[sites_bool][which_alleles]["REF"],
+                    "alt": vtbl[sites_bool][which_alleles]["ALT"],
                       "score_0" : pd.Series(score_0),
                       "score_1" : pd.Series(score_1),
                       "score_2" : pd.Series(score_2),
