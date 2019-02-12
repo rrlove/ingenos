@@ -434,7 +434,8 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
     return scores
 
 def run_pca(inversion, vtbl, genotypes, variance_threshold=0.15, min_count=3,
-            whole_inversion=True, buffer=0, samples_bool=None):
+            whole_inversion=True, buffer=0, samples_bool=None, 
+            inversionDict = inversionDict):
     
     sites = construct_filter_expression(inversion, inversionDict,
                                         whole_inversion=whole_inversion,
