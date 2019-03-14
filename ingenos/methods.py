@@ -412,10 +412,18 @@ def run_concordance_calculation(inversion, vtbl, genotypes, karyos,
         is_called_2.append(ret_tuple[6])
         is_called_all.append(ret_tuple[7])
         
+    if len(vtbl[sites_bool][which_alleles]["ALT"].shape) == 1:
+        
+        alts_to_add = vtbl[sites_bool][which_alleles]["ALT"]
+        
+    elif len(vtbl[sites_bool][which_alleles]["ALT"].shape) > 1:
+        
+        alts_to_add = vtbl[sites_bool][which_alleles]["ALT"][:,0]
+        
     scores = pd.DataFrame({"position": vtbl\
                     [sites_bool][which_alleles]["POS"],
                     "ref": vtbl[sites_bool][which_alleles]["REF"],
-                    "alt": vtbl[sites_bool][which_alleles]["ALT"][:,0],
+                    "alt": alts_to_add,
                       "score_0" : pd.Series(score_0),
                       "score_1" : pd.Series(score_1),
                       "score_2" : pd.Series(score_2),
