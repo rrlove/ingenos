@@ -457,7 +457,7 @@ def run_pca(inversion, vtbl, genotypes, variance_threshold=0.15, min_count=3,
                                  min_count=min_count,
                                  variance_threshold=variance_threshold)
     
-    coords, model = allel.stats.pca(alt_alleles)
+    coords, model = allel.pca(alt_alleles)
     
     return coords, model
      
