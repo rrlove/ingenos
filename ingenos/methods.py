@@ -283,7 +283,7 @@ def make_snp_index(positions, vtbl):
 
 def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, label_with,
                     region=None, title=None, buffer=False, alpha=0.5, 
-                    cb=True):
+                    cb=True, markersize=None):
     ##adapted from Alistair's walkthrough
     '''Show two principal components of a PCA.'''
 
@@ -292,7 +292,13 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, label_with,
                    'o', 'v', 'X', 's', 'P',
                    'd', '^', '*', '<', '>']
     
-    size_list = [5] * 10 + [2] * 10
+    if markersize:
+        
+        size_list = [markersize]
+        
+    else:
+    
+        size_list = [5] * 10 + [2] * 10
     
     x = coords[:, pc1]
     y = coords[:, pc2]
