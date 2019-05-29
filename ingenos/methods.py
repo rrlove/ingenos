@@ -294,7 +294,7 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, label_with,
     
     if markersize:
         
-        size_list = [markersize]
+        size_list = [markersize] * len(metadata[label_with].unique())
         
     else:
     
