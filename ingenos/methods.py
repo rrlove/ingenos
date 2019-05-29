@@ -313,7 +313,7 @@ def plot_pca_coords(coords, model, pc1, pc2, ax, metadata, label_with,
         
         ax.set_prop_cycle('color', colors)
     
-    for index, status in enumerate(metadata[label_with].unique()):
+    for index, status in enumerate(np.sort(metadata[label_with].unique())):
             flt = (metadata[label_with] == status).values
             ax.plot(x[flt], y[flt], marker=marker_list[index], linestyle=' ',
             label=status, markersize=size_list[index], alpha=alpha)
